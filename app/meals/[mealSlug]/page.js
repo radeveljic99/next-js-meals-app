@@ -3,8 +3,28 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import classes from "./page.module.css";
 
-export default function MealDetailsPage({ params }) {
-  const meal = getMeal(params.mealSlug);
+export async function generateMetadata({ params }) {
+  const routeParams = await params;
+
+  const meal = getMeal(routeParams.mealSlug);
+
+  if (!meal) {
+    notFound();
+  }
+
+  return {
+    title: meal.title,
+    description: meal.summary,
+    alternates: {
+      canonical: `http://localhost:3000/meals/${meal.slug}`,
+    },
+  };
+}
+
+export default async function MealDetailsPage({ params }) {
+  const routeParams = await params;
+
+  const meal = getMeal(routeParams.mealSlug);
 
   if (!meal) {
     notFound();
